@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	android:id="@+id/widget32"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+<Button
+	android:id="@+id/widget37"
+	android:layout_width="107px"
+	android:layout_height="58px"
+	android:text="&#38626;&#38283;"
+	android:textSize="25sp"
+	android:layout_below="@+id/widget36"
+	android:layout_alignLeft="@+id/widget36" />
+<Button
+	android:id="@+id/widget36"
+	android:layout_width="107px"
+	android:layout_height="58px"
+	android:text="&#35373;&#23450;"
+	android:textSize="25sp"
+	android:layout_below="@+id/widget35"
+	android:layout_toRightOf="@+id/ctitle" />
+<Button
+	android:id="@+id/widget35"
+	android:layout_width="wrap_content"
+	android:layout_height="58px"
+	android:text="&#36939;&#21205;&#38917;&#30446;"
+	android:textSize="25sp"
+	android:layout_below="@+id/rec"
+	android:layout_toRightOf="@+id/rec" />
+<Button
+	android:id="@+id/rec"
+	android:layout_width="wrap_content"
+	android:layout_height="58px"
+	android:text="&#36939;&#21205;&#35352;&#37636;"
+	android:textSize="25sp"
+	android:layout_below="@+id/ctitle"
+	android:layout_toRightOf="@+id/ctitle" />
+<TextView
+	android:id="@+id/ctitle"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:text="&#25105;&#30340;&#20581;&#36523;&#25945;&#32244;"
+	android:textSize="30sp"
+	android:layout_alignParentTop="true"
+	android:layout_alignParentLeft="true" />
+</RelativeLayout>
