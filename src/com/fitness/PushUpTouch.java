@@ -1,4 +1,4 @@
-package com.fp;
+package com.fitness;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,6 +25,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -52,8 +56,15 @@ public class PushUpTouch extends Activity {
 	Timer timer;
 	String date;
 	int start = 0;
+	int typeindex;
 	int times, goal_times;
 	private medplayer mp;
+	
+	private float mGX = 0;
+	private float mGY = 0;
+	private float mGZ = 0;
+
+	Sensor mSensor = null;
 
 	public void onCreate(Bundle savedInstanceState) 
 	{
@@ -61,9 +72,10 @@ public class PushUpTouch extends Activity {
         setContentView(R.layout.showview);
         
         times = 0;
+        start = 0;
+        goal_times = 10;
         mp = null;
-        
-        
+        timer = null;
         
         //開資料庫
         try{
@@ -80,14 +92,14 @@ public class PushUpTouch extends Activity {
           Bundle bunde = intent.getExtras();
           if (bunde != null)
           {
-          	date = bunde.getString("date");
+          	//date = bunde.getString("date");
+          	goal_times = bunde.getInt("goal_times");
           }
           
           //Display: create ListView class
-          show_view = (TextView)findViewById(R.id.showd);
-          timer = new Timer();
-          show_view.setText("目前次數, 點一下開始: " + times);
+          show_view = (TextView) findViewById(R.id.showd);
           
+          show_view.setText("目前次數, 點一下開始: " + times);
           
           show_view.setOnTouchListener(new OnTouchListener(){
 
@@ -96,7 +108,14 @@ public class PushUpTouch extends Activity {
 			{
 				if (start == 1)
 				{
-					timer.schedule(new DateTask(), 10000);
+					if (timer == null)
+					{
+						
+						timer = new Timer();
+						timer.schedule(new DateTask(), 10000);
+					}
+					Log.i(TAG, "onTouch");
+					times = 0;
 			        show_view.setText("請開始...");
 					start = 0;
 					return true;
@@ -105,23 +124,41 @@ public class PushUpTouch extends Activity {
 				// TODO Auto-generated method stub
 		        if (mp != null)
 		        {
+			      Log.i(TAG, "stop voice");
+
 		          mp.stop_voice();
 		          mp = null;
-		        }		        
-				timer.cancel();
-				
+		        }
+		        
+		        if (timer != null)
+				{
+		        	timer.cancel();
+		        	timer = null;
+				}
+		        
 				times++;
 				
-				if (times >= goal_times)
+				if (times == goal_times)
 				{
 					show_view.setText("完成次數: " + times + ", 請重新點一下開始...");
 					update(1, times);
 					start = 1;
+					if (mp == null)
+		            {
+			          //voice
+			          Log.i(TAG, "start voice");
+			          mp = new medplayer();
+			          mp.play_voice("2.mp3", false);
+			        }
 				}
 				else
 				{
-					show_view.setText("目前次數: " + times);
-			        timer.schedule(new DateTask(), 10000);
+					show_view.setText("目前次數: " + times + ", 離目標還有：" + Integer.toString(goal_times-times));
+					if (timer == null)
+					{
+						timer = new Timer();
+						timer.schedule(new DateTask(), 10000);
+					}
 				}
 		        
 				return false;
@@ -138,8 +175,9 @@ public class PushUpTouch extends Activity {
 	        if (mp == null)
             {
 	          //voice
+	          Log.i(TAG, "start voice");
 	          mp = new medplayer();
-	          mp.play_voice("warn.mp3");
+	          mp.play_voice("1.mp3", true);
 	        }
 	    }
 	        
@@ -156,7 +194,9 @@ public class PushUpTouch extends Activity {
             contentValues.put(ft_item.TYPE, types);
             contentValues.put(ft_item.TIMES, times);
             contentValues.put(ft_item.COMMIT, "");
-            //Log.i(TAG, sname + "," +  saddress);
+            Log.i(TAG, sdate + "," +  types);
+            
+            db.insert(SQLiteHelper.TB_NAME, null, contentValues);
     		
     	}catch(IllegalArgumentException e){
     		e.printStackTrace();
@@ -164,4 +204,14 @@ public class PushUpTouch extends Activity {
     		dbHelper.onUpgrade(db, --DB_VERSION, DB_VERSION);
     	}			        	
 	}
+	
+
+	
+	@Override
+    protected void onDestroy() 
+	{
+       super.onDestroy();
+       if (dbHelper != null)
+    	   dbHelper.close();
+    }
 }

@@ -1,4 +1,4 @@
-package com.fp;
+package com.fitness;
 
 import java.io.IOException; 
 import android.app.Activity; 
@@ -19,7 +19,7 @@ public class medplayer
     mp = new MediaPlayer();    
   }
   
-  void play_voice(String filename)
+  void play_voice(String filename, boolean loop)
   {
     try 
     { 
@@ -28,7 +28,7 @@ public class medplayer
         mp.reset();            
       }
       mp.setDataSource( "/sdcard/" + filename);
-      mp.setLooping(true);
+      mp.setLooping(loop);
       mp.prepare();
       mp.start(); 
     } 
@@ -75,7 +75,7 @@ public class medplayer
     }
   }
   
-  void stop_voice()
+  public void stop_voice()
   {
     if(mp.isPlaying()==true) 
     { 

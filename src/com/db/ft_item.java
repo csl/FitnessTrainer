@@ -6,7 +6,7 @@ public class ft_item
 	public static final String DATE = "adate";
 	public static final String TYPE = "type";
 	public static final String TIMES = "times";
-	public static final String COMMIT = "commit";
+	public static final String COMMIT = "ccommit";
 	
 	public String id;
 	public String date;

@@ -45,7 +45,7 @@ public class FTList extends Activity {
 	private SQLiteOpenHelper dbHelper;
 	private Cursor cursor;
 	
-	String TAG = "StoreList";
+	String TAG = "FTList";
 	SimpleDateFormat sdf;
 	
 	public void onCreate(Bundle savedInstanceState) 
@@ -72,13 +72,17 @@ public class FTList extends Activity {
 
         //取得目前找到的項目，並放到List中
         cstore_list = getStoreList(); 
-    
-        
+   
         if (cstore_list != null)
         {
+        	if (cstore_list.size() == 0)
+        	{
+        		openOptionsDialog("zero, no data...");
+        	}
+        	
           //加入到ListView中，顯示給使用者
 	        SimpleAdapter listitemAdapter=new SimpleAdapter(this,  
-	        		cstore_list, 
+	        									cstore_list, 
 	    										R.layout.no_listview_style,
 	    										new String[]{"ItemTitle","ItemText"}, 
 	    										new int[]{R.id.topTextView,R.id.bottomTextView}  
@@ -95,18 +99,16 @@ public class FTList extends Activity {
 
 	               Bundle bundle = new Bundle();
 	    	       bundle.putString("date", list_ft.get(arg2));
-	    	          
-               //將資料送給MapLocationView去顯示google map地圖
-    	    		Intent intent = new Intent();
-    	    		//intent.setClass(StoreList.this, MapLocationView.class);
-    	    		intent.putExtras(bundle);
-    	    		startActivity(intent);
-    	    		//finish();
+    	    	   Intent intent = new Intent();
+    	    	   intent.setClass(FTList.this, ShowView.class);
+    	    	   intent.putExtras(bundle);
+    	    	   startActivity(intent);
 	    	   }  
 	        });
         }
         else{
-        	finish();
+        	openOptionsDialog("no data...");
+        	//finish();
         }
 	}
 
@@ -127,17 +129,24 @@ public class FTList extends Activity {
 		scalendar.setTime(today);
         
 		int times=0;
-        for (int i=1; i<=30; i++)
+        for (int i=0; i<=30; i++)
         {
         	//Query DATABASE
         	try{
         		if (i == 0)
+        		{
         			cursor = db.query(SQLiteHelper.TB_NAME, null, ft_item.DATE + "='" + sdate + "'", null, null, null, null);
+            		Log.i(TAG, sdate);
+        		}
         		else
+        		{
         			cursor = db.query(SQLiteHelper.TB_NAME, null, ft_item.DATE + "='" + term + "'", null, null, null, null);
+            		Log.i(TAG, term);
+        		}
 
         		cursor.moveToFirst();
         		
+
         		
         		//no data
         		if (cursor.isAfterLast())
@@ -192,5 +201,30 @@ public class FTList extends Activity {
         
 		return listitem;
 	}
+	
+	@Override
+    protected void onDestroy() 
+	{
+       super.onDestroy();
+       if (dbHelper != null)
+    	   dbHelper.close();
+    }
+	
+	  public void openOptionsDialog(String info)
+	  {
+	    new AlertDialog.Builder(this)
+	    .setTitle("message")
+	    .setMessage(info)
+	    .setPositiveButton("OK",
+	        new DialogInterface.OnClickListener()
+	        {
+	         public void onClick(DialogInterface dialoginterface, int i)
+	         {
+	        	 finish();
+	         }
+	         }
+	        )
+	    .show();
+	  }
 
 }

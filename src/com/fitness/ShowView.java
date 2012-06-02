@@ -55,7 +55,7 @@ public class ShowView extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.showview);
 
-        
+        final CharSequence[] type_id = this.getResources().getStringArray(R.array.sport_list);
 	    
         //開資料庫
         try{
@@ -94,7 +94,8 @@ public class ShowView extends Activity {
     		String str = "";
         	while(!cursor.isAfterLast())
         	{
-        		str = str + "日期: " + date + " ,類別: " + cursor.getString(2) + " ,次數" + cursor.getString(3) + "\n\n";	
+        		int type = Integer.valueOf(cursor.getString(2));
+        		str = str + "日期: " + date + " ,類別: " + type_id[type-1] + " ,次數" + cursor.getString(3) + "\n\n";	
         		cursor.moveToNext();
         	}
         	cshow_view.setText(str);      		

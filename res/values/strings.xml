@@ -3,5 +3,11 @@
 
     <string name="hello">Hello World, FitnessTrainerActivity!</string>
     <string name="app_name">FitnessTrainer</string>
+    
+	<string-array name="sport_list">
+		<item>伏地挺身</item>
+		<item>仰臥起坐</item>
+		<item>拉單槓</item>
+	</string-array>
 
 </resources>
